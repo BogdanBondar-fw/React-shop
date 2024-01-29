@@ -51,19 +51,16 @@ const Main = () => {
     const [selectedCurrency, setSelectedCurrency] =
         useState<keyof iPhoneType>('EUR')
     const [total, setTotal] = useState<number>(0)
-    const [purchaseMade, setPurchaseMade] = useState<boolean>(false)
 
     const handleCurrencyChange = (currency: keyof iPhoneType) => {
         setSelectedCurrency(currency)
+        setTotal((prevTotal) =>
+            calculateTotal([iPhone12, iPhone11, iPhone10], currency)
+        )
     }
 
     const handleBuy = (price: number) => {
-        if (!purchaseMade) {
-            setTotal(price)
-            setPurchaseMade(true)
-        } else {
-            setTotal((prevTotal) => prevTotal + price)
-        }
+        setTotal((prevTotal) => prevTotal + price)
     }
 
     return (
@@ -109,5 +106,9 @@ const renderProduct = (
         <button onClick={() => handleBuy(iPhone.prices[currency])}>Buy</button>
     </div>
 )
+
+const calculateTotal = (iPhones: iPhoneModel[], currency: keyof iPhoneType) => {
+    return iPhones.reduce((total, iPhone) => total + iPhone.prices[currency], 0)
+}
 
 export default Main
