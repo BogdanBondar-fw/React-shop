@@ -11,57 +11,72 @@ interface iPhoneType {
 interface iPhoneModel {
     name: string
     description: string
-    prices: iPhoneType
+    priceUSD: number
 }
 
-const iPhone12: iPhoneModel = {
-    name: 'iPhone 12',
-    description: 'This is iPhone 12...',
-    prices: {
-        USD: 1000,
-        EUR: 900,
-        UAN: 40000,
-        PLN: 5000,
+const currencyRates: iPhoneType = {
+    USD: 1,
+    EUR: 0.9,
+    UAN: 40,
+    PLN: 5,
+}
+
+const iPhones: Record<string, iPhoneModel> = {
+    'iPhone 12': {
+        name: 'iPhone 12',
+        description: 'This is iPhone 12...',
+        priceUSD: 1000,
     },
-}
-
-const iPhone11: iPhoneModel = {
-    name: 'iPhone 11',
-    description: 'This is iPhone 11...',
-    prices: {
-        USD: 900,
-        EUR: 800,
-        UAN: 35000,
-        PLN: 4500,
+    'iPhone 11': {
+        name: 'iPhone 11',
+        description: 'This is iPhone 11...',
+        priceUSD: 900,
     },
-}
-
-const iPhone10: iPhoneModel = {
-    name: 'iPhone 10',
-    description: 'This is iPhone 10...',
-    prices: {
-        USD: 800,
-        EUR: 700,
-        UAN: 30000,
-        PLN: 4000,
+    'iPhone 10': {
+        name: 'iPhone 10',
+        description: 'This is iPhone 10...',
+        priceUSD: 800,
     },
 }
 
 const Main = () => {
     const [selectedCurrency, setSelectedCurrency] =
         useState<keyof iPhoneType>('EUR')
-    const [total, setTotal] = useState<number>(0)
+    const [purchases, setPurchases] = useState<Record<string, number>>({})
 
     const handleCurrencyChange = (currency: keyof iPhoneType) => {
         setSelectedCurrency(currency)
-        setTotal((prevTotal) =>
-            calculateTotal([iPhone12, iPhone11, iPhone10], currency)
-        )
     }
 
-    const handleBuy = (price: number) => {
-        setTotal((prevTotal) => prevTotal + price)
+    const handleBuy = (iPhoneName: string, priceUSD: number) => {
+        setPurchases((prevPurchases) => ({
+            ...prevPurchases,
+            [iPhoneName]: (prevPurchases[iPhoneName] || 0) + priceUSD,
+        }))
     }
+
+    const total = Object.entries(purchases).reduce(
+        (acc, [iPhoneName, purchase]) => {
+            const priceInSelectedCurrency =
+                purchases[iPhoneName] * currencyRates[selectedCurrency]
+            return acc + priceInSelectedCurrency
+        },
+        0
+    )
+
+    const renderProduct = (iPhone: iPhoneModel, iPhoneName: string) => (
+        <div className="list-item" key={iPhone.name}>
+            <h1>{iPhone.name}</h1>
+            <h2>{iPhone.description}</h2>
+            <h3>
+                {(iPhone.priceUSD * currencyRates[selectedCurrency]).toFixed(0)}{' '}
+                {selectedCurrency}
+            </h3>
+            <button onClick={() => handleBuy(iPhoneName, iPhone.priceUSD)}>
+                Buy
+            </button>
+        </div>
+    )
 
     return (
         <div className="main-container">
@@ -82,33 +97,16 @@ const Main = () => {
                     </button>
                 </div>
                 <div className="product-list">
-                    {renderProduct(iPhone12, selectedCurrency, handleBuy)}
-                    {renderProduct(iPhone11, selectedCurrency, handleBuy)}
-                    {renderProduct(iPhone10, selectedCurrency, handleBuy)}
+                    {Object.keys(iPhones).map((iPhoneName) =>
+                        renderProduct(iPhones[iPhoneName], iPhoneName)
+                    )}
                 </div>
-                <h2>Total: {total}</h2>
+                <h2>
+                    Total: {total.toFixed(0)} {selectedCurrency}
+                </h2>
             </div>
         </div>
     )
-}
-
-const renderProduct = (
-    iPhone: iPhoneModel,
-    currency: keyof iPhoneType,
-    handleBuy: (price: number) => void
-) => (
-    <div className="list-item" key={iPhone.name}>
-        <h1>{iPhone.name}</h1>
-        <h2>{iPhone.description}</h2>
-        <h3>
-            {iPhone.prices[currency]} {currency}
-        </h3>
-        <button onClick={() => handleBuy(iPhone.prices[currency])}>Buy</button>
-    </div>
-)
-
-const calculateTotal = (iPhones: iPhoneModel[], currency: keyof iPhoneType) => {
-    return iPhones.reduce((total, iPhone) => total + iPhone.prices[currency], 0)
 }
 
 export default Main
