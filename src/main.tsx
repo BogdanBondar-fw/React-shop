@@ -51,14 +51,19 @@ const Main = () => {
     const [selectedCurrency, setSelectedCurrency] =
         useState<keyof iPhoneType>('EUR')
     const [total, setTotal] = useState<number>(0)
+    const [purchaseMade, setPurchaseMade] = useState<boolean>(false)
 
     const handleCurrencyChange = (currency: keyof iPhoneType) => {
         setSelectedCurrency(currency)
-        setTotal(0)
     }
 
     const handleBuy = (price: number) => {
-        setTotal((prevTotal) => prevTotal + price)
+        if (!purchaseMade) {
+            setTotal(price)
+            setPurchaseMade(true)
+        } else {
+            setTotal((prevTotal) => prevTotal + price)
+        }
     }
 
     return (
