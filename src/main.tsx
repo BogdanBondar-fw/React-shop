@@ -54,7 +54,7 @@ const Main = () => {
 
     const handleCurrencyChange = (currency: keyof iPhoneType) => {
         setSelectedCurrency(currency)
-        setTotal(calculateTotal([iPhone12, iPhone11, iPhone10], currency))
+        setTotal(0)
     }
 
     const handleBuy = (price: number) => {
@@ -104,9 +104,5 @@ const renderProduct = (
         <button onClick={() => handleBuy(iPhone.prices[currency])}>Buy</button>
     </div>
 )
-
-const calculateTotal = (iPhones: iPhoneModel[], currency: keyof iPhoneType) => {
-    return iPhones.reduce((total, iPhone) => total + iPhone.prices[currency], 0)
-}
 
 export default Main
