@@ -31,7 +31,7 @@ const iPhone11: iPhoneModel = {
     prices: {
         USD: 900,
         EUR: 800,
-        UAN: 3500,
+        UAN: 35000,
         PLN: 4500,
     },
 }
@@ -42,7 +42,7 @@ const iPhone10: iPhoneModel = {
     prices: {
         USD: 800,
         EUR: 700,
-        UAN: 3000,
+        UAN: 30000,
         PLN: 4000,
     },
 }
