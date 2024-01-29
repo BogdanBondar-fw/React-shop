@@ -50,7 +50,7 @@ const iPhone10: iPhoneModel = {
 const Main = () => {
     const [selectedCurrency, setSelectedCurrency] =
         useState<keyof iPhoneType>('EUR')
-    const [total, setTotal] = useState<number>(0) // Изменено начальное значение на 0
+    const [total, setTotal] = useState<number>(0)
 
     const handleCurrencyChange = (currency: keyof iPhoneType) => {
         setSelectedCurrency(currency)
