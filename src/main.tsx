@@ -31,7 +31,7 @@ const iPhone11: iPhoneModel = {
     prices: {
         USD: 900,
         EUR: 800,
-        UAN: 35000,
+        UAN: 3500,
         PLN: 4500,
     },
 }
@@ -42,7 +42,7 @@ const iPhone10: iPhoneModel = {
     prices: {
         USD: 800,
         EUR: 700,
-        UAN: 30000,
+        UAN: 3000,
         PLN: 4000,
     },
 }
@@ -50,17 +50,19 @@ const iPhone10: iPhoneModel = {
 const Main = () => {
     const [selectedCurrency, setSelectedCurrency] =
         useState<keyof iPhoneType>('EUR')
-    const [total, setTotal] = useState<number>(
-        calculateTotal([iPhone12, iPhone11, iPhone10], selectedCurrency)
-    )
+    const [total, setTotal] = useState<number>(0) // Изменено начальное значение на 0
 
     const handleCurrencyChange = (currency: keyof iPhoneType) => {
         setSelectedCurrency(currency)
         setTotal(calculateTotal([iPhone12, iPhone11, iPhone10], currency))
     }
 
+    const handleBuy = (price: number) => {
+        setTotal((prevTotal) => prevTotal + price)
+    }
+
     return (
-        <div>
+        <div className="main-container">
             <div className="main">
                 <h1>Our shop page</h1>
                 <div className="main-btn">
@@ -78,9 +80,9 @@ const Main = () => {
                     </button>
                 </div>
                 <div className="product-list">
-                    {renderProduct(iPhone12, selectedCurrency)}
-                    {renderProduct(iPhone11, selectedCurrency)}
-                    {renderProduct(iPhone10, selectedCurrency)}
+                    {renderProduct(iPhone12, selectedCurrency, handleBuy)}
+                    {renderProduct(iPhone11, selectedCurrency, handleBuy)}
+                    {renderProduct(iPhone10, selectedCurrency, handleBuy)}
                 </div>
                 <h2>Total: {total}</h2>
             </div>
@@ -88,14 +90,18 @@ const Main = () => {
     )
 }
 
-const renderProduct = (iPhone: iPhoneModel, currency: keyof iPhoneType) => (
+const renderProduct = (
+    iPhone: iPhoneModel,
+    currency: keyof iPhoneType,
+    handleBuy: (price: number) => void
+) => (
     <div className="list-item" key={iPhone.name}>
         <h1>{iPhone.name}</h1>
         <h2>{iPhone.description}</h2>
         <h3>
             {iPhone.prices[currency]} {currency}
         </h3>
-        <button>Buy</button>
+        <button onClick={() => handleBuy(iPhone.prices[currency])}>Buy</button>
     </div>
 )
 
